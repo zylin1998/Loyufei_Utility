@@ -61,9 +61,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-
-*.meta
-
 ProjectSettings/
 
 UserSettings/
@@ -75,3 +72,5 @@ Assets/Scenes/
 Assets/Plugins/UniRx/
 
 Assets/Plugins/Zenject/
+
+Assets/Plugins/XInputDotNet/

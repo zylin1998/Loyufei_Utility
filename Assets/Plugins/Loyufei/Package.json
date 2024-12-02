@@ -1,0 +1,11 @@
+{
+  "name": "loyufeiutility",
+  "version": "1.0.0",
+  "displayName": "Loyufei Utility",
+  "description": "Game Utilities from ZYLin1998.",
+  "unity": "2022.3",
+  "author": {
+    "name": "ZYLin1998"
+  },
+  "dependencies": {}
+}

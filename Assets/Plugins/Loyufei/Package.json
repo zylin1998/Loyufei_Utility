@@ -8,7 +8,7 @@
     "name": "ZYLin1998"
   },
   "dependencies": {
-    "com.svermeulen.extenject": "0.0.1",
+    "com.svermeulen.extenject": "9.2.0",
     "com.neuecc.unirx": "7.1.0"
   }
 }

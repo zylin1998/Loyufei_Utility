@@ -7,7 +7,5 @@
   "author": {
     "name": "ZYLin1998"
   },
-  "dependencies": {
-    "com.mathijsbakker.extenject": "9.2.0",
-  }
+  "dependencies": { }
 }

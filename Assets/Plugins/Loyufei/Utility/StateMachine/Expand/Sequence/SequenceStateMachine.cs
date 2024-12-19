@@ -87,9 +87,9 @@ namespace Loyufei.StateMachine
 
         protected IEnumerable<IState> Ordered() 
         {
-            var dic = States.ToDictionary(k => k.Identity);
-
-            foreach (var order in Order.Orders) 
+            var dic    = States.ToDictionary(k => k.Identity);
+            var orders = Order.IsDefault() ? States.Select(s => s.Identity) : Order.Orders;
+            foreach (var order in orders) 
             {
                 if (!dic.TryGetValue(order, out var state)) { continue; }
 

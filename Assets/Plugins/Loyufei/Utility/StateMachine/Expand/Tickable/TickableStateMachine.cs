@@ -64,5 +64,12 @@ namespace Loyufei.StateMachine
 
             return this;
         }
+
+        public override void Dispose()
+        {
+            _Enable = false;
+
+            base.Dispose();
+        }
     }
 }

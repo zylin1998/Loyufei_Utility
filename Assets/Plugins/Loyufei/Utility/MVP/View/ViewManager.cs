@@ -45,7 +45,7 @@ namespace Loyufei.MVP
 
             var coroutine  = view.Open();
             var observable = Observable
-                .EveryFixedUpdate()
+                .EveryUpdate()
                 .TakeWhile((f) => coroutine.MoveNext())
                 .Subscribe((f) => subject.OnNext(coroutine.Current), subject.OnError, subject.OnCompleted);
 

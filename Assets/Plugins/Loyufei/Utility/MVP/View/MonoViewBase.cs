@@ -7,7 +7,6 @@ using UniRx;
 
 namespace Loyufei.MVP
 {
-    [RequireComponent(typeof(CanvasGroup))]
     public class MonoViewBase : MonoBehaviour, IView
     {
         public MonoViewBase() : base () 
@@ -17,8 +16,6 @@ namespace Loyufei.MVP
 
         [SerializeField]
         private bool          _InitActive;
-        [SerializeField]
-        protected CanvasGroup _CanvasGroup;
         [SerializeField, Range(0f, 1f)]
         protected float       _FadeDuration = 0.5f;
 
@@ -37,12 +34,12 @@ namespace Loyufei.MVP
 
         #region Public Methods
 
-        public virtual IObservable<long> Open()
+        public virtual IEnumerator Open()
         {
             return ChangeState(true);
         }
 
-        public virtual IObservable<long> Close()
+        public virtual IEnumerator Close()
         {
             return ChangeState(false);
         }
@@ -78,40 +75,20 @@ namespace Loyufei.MVP
 
         #endregion
 
-        public virtual IObservable<long> ChangeState(bool isOn)
+        public virtual IEnumerator ChangeState(bool isOn)
         {
-            if (isOn) { gameObject.SetActive(true); }
+            if (isOn) gameObject.SetActive(true);
 
-            var canvasGroup = _CanvasGroup;
+            var wait = _FadeDuration;
 
-            canvasGroup.interactable = false;
-
-            var (start, end, delta) = isOn ? (0f, 1f, 1f) : (1f, 0f, -1f);
-            var multiplex = 1 / _FadeDuration;
-
-            canvasGroup.alpha = start;
-
-            var fading = Observable
-                .EveryUpdate()
-                .TakeWhile(l => canvasGroup.alpha != end);
-
-            fading.Subscribe((l =>
+            for(; wait >= 0f;) 
             {
-                var fade = canvasGroup.alpha;
+                yield return wait;
 
-                canvasGroup.alpha = (fade + delta * multiplex * Time.deltaTime).Clamp01();
-            }));
+                wait -= Time.fixedDeltaTime;
+            }
 
-            fading
-                .Last()
-                .Subscribe(l => 
-                {
-                    canvasGroup.interactable = isOn;
-
-                    gameObject.SetActive(isOn);
-                });
-
-            return fading;
+            if (!isOn) { gameObject.SetActive(false); }
         }
 
         protected class LayoutHandler : ILayout

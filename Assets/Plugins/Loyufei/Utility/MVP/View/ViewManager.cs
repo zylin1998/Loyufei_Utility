@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using System.Xml.Schema;
 
 namespace Loyufei.MVP
 {
@@ -36,56 +37,34 @@ namespace Loyufei.MVP
             return Views.Remove(key);
         }
 
-        public IObservable<long> Show(object id, EShowViewMode showMode = EShowViewMode.Single, bool reset = false)
+        public IObservable<object> Show(object id)
         {
-            if (!Views.TryGetValue(id, out var view)) { return default; }
-
-            Actives.Push(view);
-
-            Current = Actives.Peek();
+            var subject = new Subject<object>();
             
-            return view.Open();
+            if (!Views.TryGetValue(id, out var view)) { return subject; }
+
+            var coroutine  = view.Open();
+            var observable = Observable
+                .EveryFixedUpdate()
+                .TakeWhile((f) => coroutine.MoveNext())
+                .Subscribe((f) => subject.OnNext(coroutine.Current), subject.OnError, subject.OnCompleted);
+
+            return subject;
         }
 
-        public IObservable<long> Close() 
+        public IObservable<object> Close(object id) 
         {
-            if (Current.IsDefault()) { return default; }
+            var subject = new Subject<object>();
 
-            var close = Actives.Pop();
+            if (!Views.TryGetValue(id, out var view)) { return subject; }
 
-            if(Actives.TryPeek(out var view))
-            {
-                Current = view; 
-            }
-            
-            return close.Close();
+            var coroutine  = view.Close();
+            var observable = Observable
+                .EveryFixedUpdate()
+                .TakeWhile((f) => coroutine.MoveNext())
+                .Subscribe((f) => subject.OnNext(coroutine.Current), subject.OnError, subject.OnCompleted);
+
+            return subject;
         }
-    }
-
-    public class ViewStateObservable : IObservable<long>, IObserver<long> 
-    {
-        public ViewStateObservable(IView open, IView close) 
-        {
-            Open  = open;
-            Close = close;
-
-            Close.Close().Subscribe(OnNext, OnError, () =>
-            {
-                Open.Open().Subscribe(OnNext, OnError, OnCompleted);
-            });
-        }
-
-        public IView Open  { get; }
-        public IView Close { get; }
-
-        public Subject<long> Subject { get; }
-
-        public void OnNext(long next) => Subject.OnNext(next);
-
-        public void OnCompleted() => Subject.OnCompleted();
-
-        public void OnError(Exception error) => Subject.OnError(error);
-
-        public IDisposable Subscribe(IObserver<long> observer) => Subject.Subscribe(observer);
     }
 }

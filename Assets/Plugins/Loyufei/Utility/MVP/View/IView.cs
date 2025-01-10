@@ -9,9 +9,9 @@ namespace Loyufei.MVP
     {
         public object ViewId { get; }
 
-        public IObservable<long> Open();
+        public IEnumerator Open();
 
-        public IObservable<long> Close();
+        public IEnumerator Close();
     }
 
     public abstract class ViewMono : MonoBehaviour, IView, IEnumerable<IListenerAdapter>
@@ -26,9 +26,15 @@ namespace Loyufei.MVP
 
         public abstract object ViewId { get; }
 
-        public abstract IObservable<long> Open();
+        public virtual IEnumerator Open() 
+        {
+            yield return null;
+        }
 
-        public abstract IObservable<long> Close();
+        public IEnumerator Close()
+        {
+            yield return null;
+        }
 
         public abstract IEnumerator<IListenerAdapter> GetEnumerator();
 
@@ -44,8 +50,14 @@ namespace Loyufei.MVP
 
         public abstract object ViewId { get; }
 
-        public abstract IObservable<long> Open();
+        public virtual IEnumerator Open()
+        {
+            yield return null;
+        }
 
-        public abstract IObservable<long> Close();
+        public IEnumerator Close()
+        {
+            yield return null;
+        }
     }
 }

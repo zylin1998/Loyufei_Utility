@@ -85,7 +85,7 @@ namespace Loyufei.MVP
             {
                 yield return wait;
 
-                wait -= Time.fixedDeltaTime;
+                wait -= Time.unscaledDeltaTime;
             }
 
             if (!isOn) { gameObject.SetActive(false); }

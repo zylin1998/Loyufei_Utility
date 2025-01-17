@@ -20,6 +20,15 @@ namespace Loyufei
     {
         public bool FetchData(out TSaveable saveable);
 
-        bool ISaveSystem.FetchData(out ISaveable saveable) => FetchData(out saveable);
+        bool ISaveSystem.FetchData(out ISaveable saveable)
+        {
+            TSaveable save = default;
+
+            var result = FetchData(out save);
+
+            saveable = save;
+
+            return result;
+        }
     }
 }

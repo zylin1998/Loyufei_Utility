@@ -8,6 +8,6 @@ namespace Loyufei
 {
     public interface IAdjustableSaveable<T> : ISaveable
     {
-        public T GetOrAdd(int index, Func<T> add);
+        public T GetOrAdd(object id, Func<T> add);
     }
 }

@@ -9,7 +9,7 @@ namespace Loyufei
     public class TemplateData<T> : IAdjustableSaveable<T>
     {
         [SerializeField]
-        private List<Structure> _Datas = new();
+        private List<Structure<T>> _Datas = new();
 
         public T GetOrAdd(object id, Func<T> add)
         {
@@ -17,31 +17,31 @@ namespace Loyufei
 
             if (structure == null) 
             {
-                structure = new Structure(id, add.Invoke());
+                structure = new Structure<T>(id, add.Invoke());
 
                 _Datas.Add(structure);
             }
 
             return structure.Data;
         }
+    }
 
-        [Serializable]
-        protected class Structure 
+    [Serializable]
+    public class Structure<T>
+    {
+        public Structure(object id, T data)
         {
-            public Structure(object id, T data) 
-            {
-                _Hash = id.GetHashCode();
+            _Hash = id.GetHashCode();
 
-                _Data = data;
-            }
+            _Data = data;
+        }
 
-            [SerializeField]
-            private int _Hash;
-            [SerializeField]
-            private T   _Data;
+        [SerializeField]
+        private int _Hash;
+        [SerializeField]
+        private T _Data;
 
-            public int Hash => _Hash;
-            public T   Data => _Data;
-        } 
+        public int Hash => _Hash;
+        public T Data => _Data;
     }
 }

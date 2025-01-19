@@ -10,6 +10,13 @@ namespace Loyufei
     {
         public virtual bool FetchData(out TSaveable saveable)
         {
+            if (!Saveable.IsDefault()) 
+            {
+                saveable = (TSaveable)Saveable;
+
+                return false;
+            }
+
             Saveable = this.Load();
 
             var shouldCreate = Saveable.IsDefault();

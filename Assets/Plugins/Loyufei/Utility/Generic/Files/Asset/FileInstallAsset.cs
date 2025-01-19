@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Loyufei
 {
-    public class FileInstallAsset<TData, TChannel> : ScriptableObjectInstaller<FileInstallAsset<TData, TChannel>>where TChannel : IChannel
+    public class FileInstallAsset<TData, TChannel> : ScriptableObjectInstaller<FileInstallAsset<TData, TChannel>>where TChannel : IChannel<TData>
     {
         [SerializeField]
         private SaveSystem<TemplateData<TData>> _File;
@@ -51,60 +51,59 @@ namespace Loyufei
 
         protected virtual bool BindChannel(TChannel channel) 
         {
-            var instance = (TData)channel.GetOrCreate(out var hasCreate);
+            var created = channel.GetOrCreate(out var instance);
 
             Container
                 .Bind<TData>()
                 .WithId(channel.Identity)
                 .FromInstance(instance)
                 .AsCached();
-
-            return hasCreate;
-        }
-
-        public class Channel : IChannel 
-        {
-            [Header("群組設定")]
-            [SerializeField]
-            private string _Identity;
             
-            public object Identity => _Identity;
-            
-            protected IAdjustableSaveable<TData> _Saveable;
-
-            public bool TrySet(ISaveable saveable)
-            {
-                if (saveable is IAdjustableSaveable<TData> adjust)
-                {
-                    _Saveable = adjust;
-
-                    return true;
-                }
-
-                return false;
-            }
-
-            public virtual object GetOrCreate(out bool hasCreate)
-            {
-                var added = false;
-
-                var result = _Saveable.GetOrAdd(Identity, () =>
-                {
-                    added = true;
-
-                    return Activator.CreateInstance<TData>();
-                });
-
-                hasCreate = added;
-
-                return result;
-            }
+            return created;
         }
     }
 
-    public interface IChannel : IIdentity
+    [Serializable]
+    public class Channel<TData> : IChannel<TData> 
     {
-        public object GetOrCreate(out bool hasCreate);
+        [Header("群組設定")]
+        [SerializeField]
+        private string _Identity;
+            
+        public object Identity => _Identity;
+            
+        protected IAdjustableSaveable<TData> _Saveable;
+
+        public bool TrySet(ISaveable saveable)
+        {
+            if (saveable is IAdjustableSaveable<TData> adjust)
+            {
+                _Saveable = adjust;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public virtual bool GetOrCreate(out TData result)
+        {
+            var created = false;
+
+            result = _Saveable.GetOrAdd(Identity, () =>
+            {
+                created = true;
+
+                return Activator.CreateInstance<TData>();
+            });
+
+            return created;
+        }
+    }
+
+    public interface IChannel<T> : IIdentity
+    {
+        public bool GetOrCreate(out T result);
 
         public bool TrySet(ISaveable saveable);
     }

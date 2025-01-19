@@ -26,7 +26,7 @@ namespace Loyufei
             var index = 0;
             foreach (var channel in _Channels)
             {
-                channel.TrySet(File.Saveable);
+                channel.TrySet(saveable);
 
                 changed = BindChannel(channel) || changed;
                 

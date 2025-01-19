@@ -35,16 +35,13 @@ namespace Loyufei
             
             if (changed) { File.Save(); }
 
-            if (File is IndependentFileAsset asset) { asset.Bind(Container); }
+            if (File is IndependentFileAsset asset) { return; }
             
-            else 
-            {
-                Container
-                    .Bind<ISaveSystem>()
-                    .To(File.GetType())
-                    .FromInstance(File)
-                    .AsCached();
-            }
+            Container
+                .Bind<ISaveSystem>()
+                .To(File.GetType())
+                .FromInstance(File)
+                .AsCached();
         }
 
         protected virtual void BindingAssets() 

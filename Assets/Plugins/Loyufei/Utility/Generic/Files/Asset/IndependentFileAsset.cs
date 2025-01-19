@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using UnityEngine;
 using Zenject;
@@ -22,11 +23,17 @@ namespace Loyufei
 
         public override bool FetchData(out ISaveable saveable)
         {
-            return base.FetchData(out saveable);
+            var save = default(TSaveable);
+
+            var result = FetchData(out save);
+
+            saveable = save;
+
+            return result;
         }
     }
 
-    public class IndependentFileAsset : ScriptableObject, ISaveSystem
+    public class IndependentFileAsset : ScriptableObjectInstaller<IndependentFileAsset>, ISaveSystem
     {
         [SerializeField]
         protected bool _LocatePreserve;
@@ -75,8 +82,6 @@ namespace Loyufei
 
         public ISaveable Saveable { get; protected set; }
 
-        public bool HasBind { get; protected set; }
-
         public virtual bool FetchData(out ISaveable saveable) 
         {
             saveable = default;
@@ -84,13 +89,9 @@ namespace Loyufei
             return false;
         }
 
-        public virtual void Bind(DiContainer container)
+        public override void InstallBindings()
         {
-            if (HasBind) { return; }
-
-            HasBind = true;
-
-            container
+            Container
                 .Bind<ISaveSystem>()
                 .To(GetType())
                 .FromInstance(this)

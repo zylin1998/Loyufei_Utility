@@ -1,10 +1,7 @@
-﻿using Loyufei.DomainEvents;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEditor.Build.Content;
+using System.Collections.Generic;
+using Loyufei.DomainEvents;
 
 namespace Loyufei
 {

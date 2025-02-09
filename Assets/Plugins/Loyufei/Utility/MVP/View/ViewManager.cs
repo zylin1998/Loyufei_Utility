@@ -16,12 +16,7 @@ namespace Loyufei.MVP
 
     public class ViewManager
     {
-        public ViewManager() 
-        {
-            Views = new();
-        }
-
-        public Dictionary<object, IView> Views { get; }
+        public Dictionary<object, IView> Views { get; } = new();
 
         public IView Current { get; private set; }
 
